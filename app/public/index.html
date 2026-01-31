@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head><title>Clipper Tasks</title></head>
+<body>
+    <h1>Clipper Task Tracker</h1>
+    <input id="taskInput" placeholder="Enter a task">
+    <button onclick="addTask()">Add</button>
+    <ul id="taskList"></ul>
+    <script>
+        async function loadTasks() {
+            const res = await fetch('/api/tasks');
+            const tasks = await res.json();
+            document.getElementById('taskList').innerHTML = tasks.map(t => `<li>${t.title}</li>`).join('');
+        }
+        async function addTask() {
+            const title = document.getElementById('taskInput').value;
+            await fetch('/api/tasks', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({title})
+            });
+            document.getElementById('taskInput').value = '';
+            loadTasks();
+        }
+        loadTasks();
+    </script>
+</body>
+</html>
